@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>7</version>
+  </parent>
+
+  <packaging>pom</packaging>
+  <groupId>org.webjars</groupId>
+  <artifactId>browser-sync-parent</artifactId>
+  <version>2.7.5-SNAPSHOT</version>
+  <name>BrowserSync Parent</name>
+  <description>WebJar for BrowserSync Parent</description>
+  <url>http://webjars.org</url>
+
+  <licenses>
+    <license>
+      <name>Apache v2.0</name>
+      <url>https://github.com/BrowserSync/browser-sync/blob/master/LICENSE</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <scm>
+    <url>http://github.com/webjars/browser-sync</url>
+    <connection>scm:git:https://github.com/webjars/browser-sync.git</connection>
+    <developerConnection>scm:git:https://github.com/webjars/browser-sync.git</developerConnection>
+    <tag>HEAD</tag>
+  </scm>
+
+  <developers>
+    <developer>
+      <id>lykathia</id>
+      <name>Evan Lowry</name>
+      <email>lowry.e@gmail.com</email>
+    </developer>
+  </developers>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <upstreamVersion>2.7.5</upstreamVersion>
+    <sourceUrl>http://registry.npmjs.org/browser-sync/-/</sourceUrl>
+    <destDir>${project.build.outputDirectory}/META-INF/resources/webjars/${project.artifactId}/${upstreamVersion}</destDir>
+    <extractDir>${project.build.directory}/BrowserSync-${upstreamVersion}</extractDir>
+  </properties>
+
+  <modules>
+    <module>node</module>
+    <module>web</module>
+  </modules>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>wagon-maven-plugin</artifactId>
+          <version>1.0-beta-4</version>
+          <executions>
+            <execution>
+              <id>download-archive</id>
+              <phase>process-resources</phase>
+              <goals><goal>download-single</goal></goals>
+              <configuration>
+                <url>${sourceUrl}</url>
+                <fromFile>browser-sync-${upstreamVersion}.tgz</fromFile>
+                <toFile>${project.build.directory}/browser-sync.tgz</toFile>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <artifactId>maven-antrun-plugin</artifactId>
+          <version>1.7</version>
+          <executions>
+            <execution>
+              <phase>process-resources</phase>
+              <id>unzip</id>
+              <goals><goal>run</goal></goals>
+              <configuration>
+                <target>
+                  <echo message="decompress archive" />
+                  <gunzip src="${project.build.directory}/browser-sync.tgz" dest="${project.build.directory}/browser-sync.tar" />
+                  <untar src="${project.build.directory}/browser-sync.tar" dest="${extractDir}" />
+                </target>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>2.5.1</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.sonatype.plugins</groupId>
+          <artifactId>nexus-staging-maven-plugin</artifactId>
+          <version>1.6.5</version>
+          <extensions>true</extensions>
+          <configuration>
+            <serverId>sonatype-nexus-staging</serverId>
+            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+          </configuration>
+        </plugin>
+
+      </plugins>
+    </pluginManagement>
+  </build>
+
+</project>
