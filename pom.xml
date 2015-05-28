@@ -86,6 +86,11 @@
                   <echo message="decompress archive" />
                   <gunzip src="${project.build.directory}/browser-sync.tgz" dest="${project.build.directory}/browser-sync.tar" />
                   <untar src="${project.build.directory}/browser-sync.tar" dest="${extractDir}" />
+
+                  <echo message="gathering dependencies" />
+                  <exec executable="npm" failonerror="true" dir="${extractDir}/package">
+                    <arg value="install" />
+                  </exec>
                 </target>
               </configuration>
             </execution>
