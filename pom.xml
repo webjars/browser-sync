@@ -8,12 +8,12 @@
     <version>7</version>
   </parent>
 
-  <packaging>pom</packaging>
+  <packaging>jar</packaging>
   <groupId>org.webjars</groupId>
-  <artifactId>browser-sync-parent</artifactId>
+  <artifactId>browser-sync</artifactId>
   <version>2.7.5-SNAPSHOT</version>
-  <name>BrowserSync Parent</name>
-  <description>WebJar for BrowserSync Parent</description>
+  <name>BrowserSync</name>
+  <description>WebJar for BrowserSync</description>
   <url>http://webjars.org</url>
 
   <licenses>
@@ -45,78 +45,80 @@
     <sourceUrl>http://registry.npmjs.org/browser-sync/-/</sourceUrl>
     <destDir>${project.build.outputDirectory}/META-INF/resources/webjars/${project.artifactId}/${upstreamVersion}</destDir>
     <extractDir>${project.build.directory}/BrowserSync-${upstreamVersion}</extractDir>
+    <requirejs>
+      {
+      }
+    </requirejs>
   </properties>
 
-  <modules>
-    <module>node</module>
-    <module>web</module>
-  </modules>
-
   <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>wagon-maven-plugin</artifactId>
-          <version>1.0-beta-4</version>
-          <executions>
-            <execution>
-              <id>download-archive</id>
-              <phase>process-resources</phase>
-              <goals><goal>download-single</goal></goals>
-              <configuration>
-                <url>${sourceUrl}</url>
-                <fromFile>browser-sync-${upstreamVersion}.tgz</fromFile>
-                <toFile>${project.build.directory}/browser-sync.tgz</toFile>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>wagon-maven-plugin</artifactId>
+        <version>1.0-beta-4</version>
+        <executions>
+          <execution>
+            <id>download-archive</id>
+            <phase>process-resources</phase>
+            <goals><goal>download-single</goal></goals>
+            <configuration>
+              <url>${sourceUrl}</url>
+              <fromFile>browser-sync-${upstreamVersion}.tgz</fromFile>
+              <toFile>${project.build.directory}/browser-sync.tgz</toFile>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 
-        <plugin>
-          <artifactId>maven-antrun-plugin</artifactId>
-          <version>1.7</version>
-          <executions>
-            <execution>
-              <phase>process-resources</phase>
-              <id>unzip</id>
-              <goals><goal>run</goal></goals>
-              <configuration>
-                <target>
-                  <echo message="decompress archive" />
-                  <gunzip src="${project.build.directory}/browser-sync.tgz" dest="${project.build.directory}/browser-sync.tar" />
-                  <untar src="${project.build.directory}/browser-sync.tar" dest="${extractDir}" />
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.7</version>
+        <executions>
+          <execution>
+            <phase>process-resources</phase>
+            <id>unzip</id>
+            <goals><goal>run</goal></goals>
+            <configuration>
+              <target>
+                <echo message="extract package" />
+                <gunzip src="${project.build.directory}/browser-sync.tgz" dest="${project.build.directory}/browser-sync.tar" />
+                <untar src="${project.build.directory}/browser-sync.tar" dest="${extractDir}" />
 
-                  <echo message="gathering dependencies" />
-                  <exec executable="npm" failonerror="true" dir="${extractDir}/package">
-                    <arg value="install" />
-                  </exec>
-                </target>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
+                <echo message="gathering dependencies" />
+                <exec executable="npm" failonerror="true" dir="${extractDir}/package">
+                  <arg value="install" />
+                </exec>
 
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-release-plugin</artifactId>
-          <version>2.5.1</version>
-        </plugin>
+                <echo message="moving resources" />
+                <move todir="${destDir}">
+                  <fileset dir="${extractDir}/package" />
+                </move>
+              </target>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 
-        <plugin>
-          <groupId>org.sonatype.plugins</groupId>
-          <artifactId>nexus-staging-maven-plugin</artifactId>
-          <version>1.6.5</version>
-          <extensions>true</extensions>
-          <configuration>
-            <serverId>sonatype-nexus-staging</serverId>
-            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-            <autoReleaseAfterClose>true</autoReleaseAfterClose>
-          </configuration>
-        </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.5.1</version>
+      </plugin>
 
-      </plugins>
-    </pluginManagement>
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <version>1.6.5</version>
+        <extensions>true</extensions>
+        <configuration>
+          <serverId>sonatype-nexus-staging</serverId>
+          <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+          <autoReleaseAfterClose>true</autoReleaseAfterClose>
+        </configuration>
+      </plugin>
+
+    </plugins>
   </build>
 
 </project>
