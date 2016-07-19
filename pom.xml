@@ -11,7 +11,7 @@
   <packaging>jar</packaging>
   <groupId>org.webjars</groupId>
   <artifactId>browser-sync</artifactId>
-  <version>2.7.6-SNAPSHOT</version>
+  <version>2.13.0-SNAPSHOT</version>
   <name>BrowserSync</name>
   <description>WebJar for BrowserSync</description>
   <url>http://webjars.org</url>
@@ -41,10 +41,9 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <upstreamVersion>2.7.5</upstreamVersion>
     <sourceUrl>http://registry.npmjs.org/browser-sync/-/</sourceUrl>
-    <destDir>${project.build.outputDirectory}/META-INF/resources/webjars/${project.artifactId}/${upstreamVersion}</destDir>
-    <extractDir>${project.build.directory}/BrowserSync-${upstreamVersion}</extractDir>
+    <destDir>${project.build.outputDirectory}/META-INF/resources/webjars/${project.artifactId}/${project.version}</destDir>
+    <extractDir>${project.build.directory}/BrowserSync-${version.unsnapshot}</extractDir>
     <requirejs>
       {
       }
@@ -53,6 +52,20 @@
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>com.jamesward</groupId>
+        <artifactId>unsnapshot-maven-plugin</artifactId>
+        <version>0.1</version>
+        <executions>
+          <execution>
+            <phase>initialize</phase>
+            <goals>
+              <goal>unsnapshot</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>wagon-maven-plugin</artifactId>
@@ -64,7 +77,7 @@
             <goals><goal>download-single</goal></goals>
             <configuration>
               <url>${sourceUrl}</url>
-              <fromFile>browser-sync-${upstreamVersion}.tgz</fromFile>
+              <fromFile>browser-sync-${version.unsnapshot}.tgz</fromFile>
               <toFile>${project.build.directory}/browser-sync.tgz</toFile>
             </configuration>
           </execution>
